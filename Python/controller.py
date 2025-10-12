@@ -14,11 +14,11 @@ class StudentController:
         self.current_student = None
     
     def validate_email(self, email):
-        """Validate email against required pattern"""
+
         return re.match(self.EMAIL_PATTERN, email) is not None
     
     def validate_password(self, password):
-        """Validate password against required pattern"""
+
         return re.match(self.PASSWORD_PATTERN, password) is not None
     
     def register(self, name, email, password):
@@ -112,7 +112,6 @@ class AdminController:
             if not student.subjects:
                 continue
             
-            # Calculate average grade
             avg_mark = student.get_average_mark()
             if avg_mark >= 85:
                 grade = "HD"

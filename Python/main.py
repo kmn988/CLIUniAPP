@@ -22,7 +22,7 @@ def run_student_system():
                 print(result)
         
         elif choice == 'r':
-            # Register
+
             name = input("Name: ").strip()
             email = input("Email: ").strip()
             password = input("Password: ").strip()
@@ -48,7 +48,7 @@ def run_subject_enrolment_system(student):
         choice = SubjectEnrolmentMenu.display()
         
         if choice == 'e':
-            # Enroll in subject
+
             success, result = controller.enroll_subject(student)
             if success:
                 print(f"Enrolled in subject {result.id}")
@@ -57,7 +57,7 @@ def run_subject_enrolment_system(student):
                 print(result)
         
         elif choice == 'r':
-            # Remove subject
+
             subject_id = input("Enter subject ID to remove: ").strip()
             success = controller.remove_subject(student, subject_id)
             if success:
@@ -66,7 +66,7 @@ def run_subject_enrolment_system(student):
                 print("Subject not found")
         
         elif choice == 's':
-            # Show subjects
+
             subjects = controller.show_subjects(student)
             if not subjects:
                 print("No subjects enrolled")
@@ -76,7 +76,7 @@ def run_subject_enrolment_system(student):
                 print(f"Average mark: {student.get_average_mark():.2f}")
         
         elif choice == 'c':
-            # Change password
+
             new_password = input("New password: ").strip()
             success, message = controller.change_password(student, new_password)
             print(message)
