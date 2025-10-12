@@ -3,12 +3,11 @@ from database import Database
 from student import Student
 from admin import Admin
 
-
 class StudentController:
-    
+
     EMAIL_PATTERN = r'^[a-zA-Z]+\.[a-zA-Z]+@university\.com$'
     PASSWORD_PATTERN = r'^[A-Z][a-zA-Z]{4,}[0-9]{3,}$'
-    
+
     def __init__(self):
         self.database = Database()
         self.current_student = None
