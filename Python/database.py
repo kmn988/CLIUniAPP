@@ -1,36 +1,42 @@
-from student import Student
 import pickle
 import os
 
-class Database: 
+
+class Database:
+    
     FILE_NAME = "students.data"
     
     def __init__(self):
-        """Initialize database and create file if it doesn't exist"""
         if not os.path.exists(self.FILE_NAME):
             self.clear()
     
     def save(self, student):
-        """Save a student to the database"""
+
         students = self.load_all()
         students.append(student)
         self._write_all(students)
     
     def load_all(self):
-        """Load all students from the database"""
+
         try:
             with open(self.FILE_NAME, 'rb') as f:
                 return pickle.load(f)
         except (EOFError, FileNotFoundError):
             return []
+        except Exception as e:
+            print(f"Error loading database: {e}")
+            return []
     
     def _write_all(self, students):
-        """Write all students to the database"""
-        with open(self.FILE_NAME, 'wb') as f:
-            pickle.dump(students, f)
+
+        try:
+            with open(self.FILE_NAME, 'wb') as f:
+                pickle.dump(students, f)
+        except Exception as e:
+            print(f"Error writing to database: {e}")
     
     def find_by_email(self, email):
-        """Find a student by email"""
+
         students = self.load_all()
         for student in students:
             if student.email == email:
@@ -38,7 +44,7 @@ class Database:
         return None
     
     def find_by_id(self, student_id):
-        """Find a student by ID"""
+
         students = self.load_all()
         for student in students:
             if student.id == student_id:
@@ -46,7 +52,7 @@ class Database:
         return None
     
     def update(self, updated_student):
-        """Update a student's information"""
+
         students = self.load_all()
         for i, student in enumerate(students):
             if student.id == updated_student.id:
@@ -56,7 +62,7 @@ class Database:
         return False
     
     def remove(self, student_id):
-        """Remove a student by ID"""
+
         students = self.load_all()
         for student in students:
             if student.id == student_id:
@@ -66,6 +72,9 @@ class Database:
         return False
     
     def clear(self):
-        """Clear all students from the database"""
-        with open(self.FILE_NAME, 'wb') as f:
-            pickle.dump([], f)
+
+        try:
+            with open(self.FILE_NAME, 'wb') as f:
+                pickle.dump([], f)
+        except Exception as e:
+            print(f"Error clearing database: {e}")

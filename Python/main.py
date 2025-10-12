@@ -1,12 +1,16 @@
+from controller import StudentController, SubjectController, AdminController
+from menu import UniversityMenu, StudentMenu, SubjectEnrolmentMenu, AdminMenu
+from database import Database
+
+
 def run_student_system():
-    """Run the student subsystem"""
     controller = StudentController()
     
     while True:
         choice = StudentMenu.display()
         
         if choice == 'l':
-            # Login
+
             email = input("Email: ").strip()
             password = input("Password: ").strip()
             
@@ -36,7 +40,7 @@ def run_student_system():
 
 
 def run_subject_enrolment_system(student):
-    """Run the subject enrollment subsystem"""
+
     database = Database()
     controller = SubjectController(database)
     
@@ -84,55 +88,103 @@ def run_subject_enrolment_system(student):
 
 
 def run_admin_system():
-    """Run the admin subsystem"""
+
     controller = AdminController()
+    
+    print("\n=== Admin Login ===")
+    username = input("Username: ").strip()
+    password = input("Password: ").strip()
+    
+    success, result = controller.login(username, password)
+    if not success:
+        print(result)
+        return
+    
+    print(f"Welcome {result.username}!")
     
     while True:
         choice = AdminMenu.display()
         
         if choice == 's':
-            # Show all students
             students = controller.show_all_students()
             if not students:
                 print("No students in database")
             else:
+                print(f"\n{'='*60}")
+                print(f"Total Students: {len(students)}")
+                print(f"{'='*60}")
                 for student in students:
                     print(student)
+                    if student.subjects:
+                        print(f"  Enrolled subjects: {len(student.subjects)}")
+                        print(f"  Average mark: {student.get_average_mark():.2f}")
+                        print(f"  Status: {'PASS' if student.is_passing() else 'FAIL'}")
+                    else:
+                        print(f"  No subjects enrolled")
+                    print(f"{'-'*60}")
         
         elif choice == 'g':
-            # Group by grade
+
             grouped = controller.group_by_grade()
+            print(f"\n{'='*60}")
+            print("Students Grouped by Grade")
+            print(f"{'='*60}")
             for grade, students in grouped.items():
                 if students:
-                    print(f"\n{grade} Grade:")
+                    print(f"\n{grade} Grade ({len(students)} students):")
                     for student in students:
-                        print(f"  {student}")
+                        print(f"  {student.name} (ID: {student.id}) - Avg: {student.get_average_mark():.2f}")
         
         elif choice == 'p':
-            # Partition PASS/FAIL
+
             passed, failed = controller.partition_pass_fail()
-            print("\nPASS:")
-            for student in passed:
-                print(f"  {student}")
-            print("\nFAIL:")
-            for student in failed:
-                print(f"  {student}")
+            print(f"\n{'='*60}")
+            print("Students Partitioned by PASS/FAIL")
+            print(f"{'='*60}")
+            print(f"\nPASS ({len(passed)} students):")
+            if passed:
+                for student in passed:
+                    print(f"  {student.name} (ID: {student.id}) - Avg: {student.get_average_mark():.2f}")
+            else:
+                print("  No passing students")
+            
+            print(f"\nFAIL ({len(failed)} students):")
+            if failed:
+                for student in failed:
+                    avg = student.get_average_mark()
+                    print(f"  {student.name} (ID: {student.id}) - Avg: {avg:.2f if student.subjects else 0}")
+            else:
+                print("  No failing students")
         
         elif choice == 'r':
-            # Remove student
+
             student_id = input("Enter student ID to remove: ").strip()
             success = controller.remove_student(student_id)
             if success:
-                print(f"Student {student_id} removed")
+                print(f"Student {student_id} removed successfully")
             else:
                 print("Student not found")
         
         elif choice == 'c':
-            # Clear database
-            confirm = input("Are you sure? (y/n): ").strip().lower()
+
+            confirm = input("Are you sure you want to clear all data? (y/n): ").strip().lower()
             if confirm == 'y':
                 controller.clear_database()
-                print("Database cleared")
+                print("Database cleared successfully")
+            else:
+                print("Operation cancelled")
+        
+        elif choice == 't':
+
+            stats = controller.get_statistics()
+            print(f"\n{'='*60}")
+            print("System Statistics")
+            print(f"{'='*60}")
+            print(f"Total Students: {stats['total_students']}")
+            print(f"Students with Subjects: {stats['students_with_subjects']}")
+            print(f"Average System Mark: {stats['average_system_mark']:.2f}")
+            print(f"Pass Rate: {stats['pass_rate']:.2f}%")
+            print(f"{'='*60}")
         
         elif choice == 'x':
             break
@@ -141,8 +193,10 @@ def run_admin_system():
 
 
 def main():
-    """Main application entry point"""
-    print("Welcome to CLIUniApp")
+
+    print("=" * 60)
+    print(" " * 20 + "CLIUniApp")
+    print("=" * 60)
     
     while True:
         choice = UniversityMenu.display()
@@ -152,10 +206,10 @@ def main():
         elif choice == 'S':
             run_student_system()
         elif choice == 'X':
-            print("Goodbye!")
+            print("\nThank you for using CLIUniApp. Goodbye!")
             break
         else:
-            print("Invalid option")
+            print("Invalid option. Please try again.")
 
 
 if __name__ == "__main__":
